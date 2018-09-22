@@ -21,6 +21,8 @@ namespace SQLProject
             {
                 conn.Open();
 
+                MySqlCommand cmd = conn.CreateCommand();
+
             }
         }
     }
