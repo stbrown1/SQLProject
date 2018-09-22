@@ -22,6 +22,21 @@ namespace SQLProject
                 conn.Open();
 
                 MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = "SELECT DepartmentID AS id, name, GroupName AS group, ModifiedDate AS modDate FROM location;";
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                List<Location> locations = new List<Location>();
+                while (reader.Read())
+                {
+                    Location loc = new Location();
+                    loc.DepartmentId = (int)reader["id"];
+                    loc.Name = (string)reader["name"];
+                    loc.Group = (string)reader["group"];
+                    loc.ModifiedDate = (DateTime)reader["modDate"];
+                    locations.Add(loc);
+                }
+
+                return locations;
 
             }
         }
