@@ -68,13 +68,42 @@ namespace SQLProject
                 conn.Open();
 
                 MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "UPDATE location SET DepartmentID = @id, Name = '@name', GroupName = '@group', ModifiedDate = @modDate);";
+                cmd.CommandText = "UPDATE location SET DepartmentID = @id, Name = '@name', GroupName = '@group', ModifiedDate = @modDate;";
                 cmd.Parameters.AddWithValue("DepartmentID", dId);
                 cmd.Parameters.AddWithValue("Name", n);
                 cmd.Parameters.AddWithValue("GroupName", gn);
                 cmd.Parameters.AddWithValue("ModifiedDate", dm);
                 cmd.ExecuteNonQuery();
-                
+            }
+        }
+
+        public void DeleteLocation(int dId)
+        {
+            MySqlConnection conn = new MySqlConnection(connectionString);
+
+            using (conn)
+            {
+                conn.Open();
+
+                MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = "DELETE FROM location WHERE DepartmentID = @id;";
+                cmd.Parameters.AddWithValue("DepartmentID", dId);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteLocation(string n)
+        {
+            MySqlConnection conn = new MySqlConnection(connectionString);
+
+            using (conn)
+            {
+                conn.Open();
+
+                MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = "DELETE FROM location WHERE Name = '@name';";
+                cmd.Parameters.AddWithValue("Name", n);
+                cmd.ExecuteNonQuery();
             }
         }
     }
