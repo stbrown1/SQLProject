@@ -40,5 +40,23 @@ namespace SQLProject
 
             }
         }
+
+        public void CreateLocation(Location l)
+        {
+            MySqlConnection conn = new MySqlConnection(connectionString);
+
+            using (conn)
+            {
+                conn.Open();
+
+                MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = "INSERT INTO location(DepartmentID, Name, GroupName, ModifiedDate) VALUES (@id, @name, @group, @modDate);";
+                cmd.Parameters.AddWithValue("DepartmentID", l.DepartmentId);
+                cmd.Parameters.AddWithValue("Name", l.Name);
+                cmd.Parameters.AddWithValue("GroupName", l.Group);
+                cmd.Parameters.AddWithValue("ModifiedDate", l.ModifiedDate);
+                cmd.ExecuteNonQuery();
+            }
+        }
     }
 }
