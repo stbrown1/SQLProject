@@ -58,5 +58,24 @@ namespace SQLProject
                 cmd.ExecuteNonQuery();
             }
         }
+
+        public void UpdateLocation(int dId, string n, string gn, DateTime dm)
+        {
+            MySqlConnection conn = new MySqlConnection(connectionString);
+
+            using (conn)
+            {
+                conn.Open();
+
+                MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = "UPDATE location SET DepartmentID = @id, Name = '@name', GroupName = '@group', ModifiedDate = @modDate);";
+                cmd.Parameters.AddWithValue("DepartmentID", dId);
+                cmd.Parameters.AddWithValue("Name", n);
+                cmd.Parameters.AddWithValue("GroupName", gn);
+                cmd.Parameters.AddWithValue("ModifiedDate", dm);
+                cmd.ExecuteNonQuery();
+                
+            }
+        }
     }
 }
