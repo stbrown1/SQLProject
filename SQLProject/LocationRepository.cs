@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
+using Dapper;
+using System.Linq;
+
 
 namespace SQLProject
 {
@@ -21,22 +24,24 @@ namespace SQLProject
             {
                 conn.Open();
 
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT DepartmentID AS id, name, GroupName AS group, ModifiedDate AS modDate FROM location;";
-                MySqlDataReader reader = cmd.ExecuteReader();
+                return conn.Query<Location>("SELECT DepartmentID AS DepartmentId, name, GroupName AS `group`, ModifiedDate AS modDate FROM department;").ToList();
 
-                List<Location> locations = new List<Location>();
-                while (reader.Read())
-                {
-                    Location loc = new Location();
-                    loc.DepartmentId = (int)reader["id"];
-                    loc.Name = (string)reader["name"];
-                    loc.Group = (string)reader["group"];
-                    loc.ModifiedDate = (DateTime)reader["modDate"];
-                    locations.Add(loc);
-                }
+                //MySqlCommand cmd = conn.CreateCommand();
+                //cmd.CommandText = "SELECT DepartmentID AS id, name, GroupName AS group, ModifiedDate AS modDate FROM location;";
+                //MySqlDataReader reader = cmd.ExecuteReader();
 
-                return locations;
+                //List<Location> locations = new List<Location>();
+                //while (reader.Read())
+                //{
+                //    Location loc = new Location();
+                //    loc.DepartmentId = (int)reader["id"];
+                //    loc.Name = (string)reader["name"];
+                //    loc.Group = (string)reader["group"];
+                //    loc.ModifiedDate = (DateTime)reader["modDate"];
+                //    locations.Add(loc);
+                //}
+
+                //return locations;
 
             }
         }
@@ -49,17 +54,19 @@ namespace SQLProject
             {
                 conn.Open();
 
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "INSERT INTO location(DepartmentID, Name, GroupName, ModifiedDate) VALUES (@id, @name, @group, @modDate);";
-                cmd.Parameters.AddWithValue("DepartmentID", l.DepartmentId);
-                cmd.Parameters.AddWithValue("Name", l.Name);
-                cmd.Parameters.AddWithValue("GroupName", l.Group);
-                cmd.Parameters.AddWithValue("ModifiedDate", l.ModifiedDate);
-                cmd.ExecuteNonQuery();
+                conn.Execute("INSERT INTO department(DepartmentID, Name, GroupName, ModifiedDate) VALUES (@id, @name, @group, @modDate);", new { id = l.DepartmentId, name = l.Name, group = l.Group, modDate = l.ModifiedDate });
+
+                //MySqlCommand cmd = conn.CreateCommand();
+                //cmd.CommandText = "INSERT INTO location(DepartmentID, Name, GroupName, ModifiedDate) VALUES (@id, @name, @group, @modDate);";
+                //cmd.Parameters.AddWithValue("id", l.DepartmentId);
+                //cmd.Parameters.AddWithValue("name", l.Name);
+                //cmd.Parameters.AddWithValue("group", l.Group);
+                //cmd.Parameters.AddWithValue("modDate", l.ModifiedDate);
+                //cmd.ExecuteNonQuery();
             }
         }
 
-        public void UpdateLocation(int dId, string n, string gn, DateTime dm)
+        public void UpdateLocation(int deptID, string deptName, string groupName, DateTime dateMod)
         {
             MySqlConnection conn = new MySqlConnection(connectionString);
 
@@ -67,13 +74,15 @@ namespace SQLProject
             {
                 conn.Open();
 
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "UPDATE location SET DepartmentID = @id, Name = '@name', GroupName = '@group', ModifiedDate = @modDate;";
-                cmd.Parameters.AddWithValue("DepartmentID", dId);
-                cmd.Parameters.AddWithValue("Name", n);
-                cmd.Parameters.AddWithValue("GroupName", gn);
-                cmd.Parameters.AddWithValue("ModifiedDate", dm);
-                cmd.ExecuteNonQuery();
+                conn.Execute("UPDATE department SET Name = @name, GroupName = @group, ModifiedDate = @modDate WHERE DepartmentID = @id;", new { name = deptName, group = groupName, modDate = dateMod, id = deptID });
+
+                //MySqlCommand cmd = conn.CreateCommand();
+                //cmd.CommandText = "UPDATE location SET DepartmentID = @id, Name = '@name', GroupName = '@group', ModifiedDate = @modDate;";
+                //cmd.Parameters.AddWithValue("DepartmentID", dId);
+                //cmd.Parameters.AddWithValue("Name", n);
+                //cmd.Parameters.AddWithValue("GroupName", gn);
+                //cmd.Parameters.AddWithValue("ModifiedDate", dm);
+                //cmd.ExecuteNonQuery();
             }
         }
 
@@ -85,10 +94,12 @@ namespace SQLProject
             {
                 conn.Open();
 
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "DELETE FROM location WHERE DepartmentID = @id;";
-                cmd.Parameters.AddWithValue("DepartmentID", dId);
-                cmd.ExecuteNonQuery();
+                conn.Execute("DELETE FROM department WHERE DepartmentID = @id;", new { id = dId });
+
+                //MySqlCommand cmd = conn.CreateCommand();
+                //cmd.CommandText = "DELETE FROM location WHERE DepartmentID = @id;";
+                //cmd.Parameters.AddWithValue("DepartmentID", dId);
+                //cmd.ExecuteNonQuery();
             }
         }
 
@@ -100,10 +111,12 @@ namespace SQLProject
             {
                 conn.Open();
 
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "DELETE FROM location WHERE Name = '@name';";
-                cmd.Parameters.AddWithValue("Name", n);
-                cmd.ExecuteNonQuery();
+                conn.Execute("DELETE FROM department WHERE Name = '@name';", new { name = n });
+
+                //MySqlCommand cmd = conn.CreateCommand();
+                //cmd.CommandText = "DELETE FROM location WHERE Name = '@name';";
+                //cmd.Parameters.AddWithValue("Name", n);
+                //cmd.ExecuteNonQuery();
             }
         }
     }
